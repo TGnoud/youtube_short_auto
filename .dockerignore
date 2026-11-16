@@ -1,0 +1,10 @@
+**
+!renderer/
+!renderer/Dockerfile
+!renderer/requirements.txt
+!renderer/app.py
+!renderer/zip_jobs.py
+!renderer/video_jobs.py
+!renderer/review_bridge.py
+!renderer/subtitles.py
+!renderer/video_jobs.py

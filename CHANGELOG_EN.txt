@@ -1,0 +1,9 @@
+English Shorts workflow – revision 2026-11-07
+
+- Changed offline Piper model from Vietnamese vi_VN-vais1000-medium to US English en_US-lessac-medium.
+- Changed prompts and sample job: narration, title, description, hashtags, and image generation prompts are English.
+- Added manifest language: en-US, validated by the rendering service.
+- Updated Telegram preview and approval buttons to English.
+- Updated n8n workflow note/name and example upload region to US (YouTube visibility stays PRIVATE).
+- Updated Vietnamese setup guide and instructions for upgrading an existing .env file.
+- No additional paid AI/API dependency introduced; ChatGPT Plus still requires manual script/image creation.

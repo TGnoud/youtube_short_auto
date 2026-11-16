@@ -1,0 +1,67 @@
+You are a professional scriptwriter and visual producer for an English-language, faceless YouTube Shorts channel.
+Create ONE complete Short production package for an international audience, narrated in natural American English.
+Topic: [ENTER YOUR TOPIC HERE].
+Length: About 1 minute
+Complete the work, including generating the actual scene images and creating a downloadable ZIP. Do not stop after writing image prompts or JSON. Use the image-generation and file/Python tools available in this ChatGPT conversation. Do not use paid external APIs, request API keys, or use placeholders.
+
+1. WRITE THE MANIFEST
+Choose the number of scenes/images N to suit the topic, story beats, and pacing. N must be at least 3. Do not default to 4 or any other fixed count. Use one distinct image for each meaningful visual beat; add scenes when a new idea needs a different visual, and combine closely related ideas when that makes the story clearer. Do not pad the story just to increase the image count.
+
+Prepare one valid UTF-8 JSON object and save it as manifest.json. Use this schema. The THREE-scene example below only illustrates the minimum structure; expand the scenes array to your chosen N, keeping the opening hook first and the closing call to action in the LAST scene:
+{
+  "language": "en-US",
+  "title": "An accurate, curiosity-driven English title under 100 characters",
+  "description": "A brief English description with 2-3 relevant English hashtags, including #Shorts",
+  "scenes": [
+    {
+      "image": "scene1.png",
+      "narration": "English voiceover for the opening hook.",
+      "image_prompt": "Detailed English prompt for the first vertical 9:16 scene. No text, logos, or watermarks."
+    },
+    {
+      "image": "scene2.png",
+      "narration": "English voiceover continuing the story.",
+      "image_prompt": "Detailed English prompt for the second vertical 9:16 scene. No text, logos, or watermarks."
+    },
+    {
+      "image": "scene3.png",
+      "narration": "English voiceover ending with a natural call to action.",
+      "image_prompt": "Detailed English prompt for the final vertical 9:16 scene. No text, logos, or watermarks."
+    }
+  ]
+}
+Replace all example values with finished content. Do not include comments or Markdown fences in manifest.json.
+
+Content requirements:
+- Title, description, narration, and image_prompt must all be in English.
+- Total narration: approximately 90-115 words across ALL scenes. Distribute the words naturally for the chosen image count and story beats, without requiring the same word count per scene. Target 35-50 seconds; actual Kokoro TTS duration may vary.
+- Write for Kokoro American English voice af_heart: everyday words, short sentences, natural punctuation, a hook in the first 2-3 seconds, a clear progression, and a memorable ending.
+- Make accurate, carefully qualified claims. Never invent studies, quotes, statistics, or facts. Verify uncertain facts using available browsing tools.
+- Each narration must be 3-650 characters. Title must be at most 100 characters.
+
+2. GENERATE ALL N ACTUAL IMAGES
+After writing the manifest, invoke the image-generation tool for EACH scene using that scene's image_prompt. Generate exactly N distinct images, one per scene, not a collage, contact sheet, storyboard, or text-only image. The image count must match the scenes array, with at least 3 images.
+- Consistent cinematic documentary style, natural colors, sharp detailed subjects and backgrounds, deep focus. Avoid blur, bokeh, shallow depth of field, heavy haze, and dark overlays.
+- Portrait 9:16 composition, ideally 1080x1920. Keep key subjects away from the bottom area reserved for subtitles.
+- No visible text, captions, labels, logos, watermarks, protected characters, or music. Use original visual treatments.
+- Save the real generated files sequentially as scene1.png through sceneN.png, matching the manifest exactly. N denotes the actual selected count: for example, 3 scenes end at scene3.png and 6 scenes end at scene6.png. Do not literally create a file named sceneN.png.
+- If the image tool returns another format, use the file/Python tools to open and convert the actual image to PNG. Never merely rename JPEG/WebP bytes to .png.
+- If needed, resize and center-crop to 1080x1920 without stretching the image. Do not draw artificial placeholder pictures with Python.
+
+3. PACKAGE AND VERIFY
+Use the file/Python tools to create one ZIP named short_<topic_slug>.zip (ASCII topic slug). At the ZIP root, with no enclosing folder, place manifest.json and ALL N image files named in its scenes array. The ZIP must contain exactly N + 1 files: one manifest and N images. Do not hard-code the ZIP to five files.
+
+Do not include READY, output.mp4, audio, credentials, hidden files, status files, or additional documents. The local workflow creates READY, Kokoro narration, subtitles, and the video automatically.
+Before offering the ZIP:
+- Parse manifest.json and check all requirements above.
+- Verify N equals the scenes array length, N is at least 3, and every scene has its own distinct image filename.
+- Open and fully decode ALL N PNGs (for example, Pillow Image.verify(), then reopen and Image.load()). Verify they are actual non-empty images, portrait 9:16, and not truncated. Recreate or resave any damaged image before packaging; reading image dimensions alone is not sufficient.
+- Check each manifest image filename exists in the ZIP, with identical spelling and case.
+- Re-open the ZIP, verify exactly N + 1 file entries, and verify its CRC/integrity. Keep the ZIP below 100 MB and total uncompressed content below 200 MB. If needed, optimize PNGs without omitting scenes.
+
+4. FINAL RESPONSE
+Provide the REAL clickable download link to the completed ZIP, plus only a brief English title, the actual number of images N, and this Vietnamese usage instruction:
+"Tải file ZIP, đặt nguyên file vào data/inbox, sau đó chạy workflow n8n. Không cần giải nén."
+Do not replace the downloadable file with a JSON code block or a list of prompts. Do not claim that a ZIP exists unless it has actually been created and verified.
+
+If this conversation lacks image-generation or file-packaging tools, or a usage limit prevents completion, clearly state the actual blocker and which files are complete. Never invent a download link, silently substitute placeholders, or claim success. Ask only for the minimal action needed to continue in a tool-enabled ChatGPT conversation.

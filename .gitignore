@@ -1,0 +1,42 @@
+# Local environment and secrets (keep safe configuration examples)
+.env
+.env.*
+!.env.example
+!.env.*.example
+
+# Runtime inputs, rendered media, downloaded voice models and job state
+# Keep directory placeholders so a fresh clone retains the data layout.
+/data/**
+!/data/**/
+!/data/**/.keep
+
+# Local backups may contain n8n credentials and database exports
+/backups/
+
+# Python bytecode, virtual environments and tool caches
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+env/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+.coverage.*
+htmlcov/
+
+# Local editor settings
+.vscode/
+.idea/
+
+# Logs, temporary files and operating system metadata
+*.log
+*.tmp
+*.temp
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+Desktop.ini

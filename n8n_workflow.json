@@ -1,0 +1,501 @@
+{
+  "name": "EN-US AI Faceless Shorts - ChatGPT Plus input - FREE local Kokoro/FFmpeg - Telegram approval - YouTube",
+  "nodes": [
+    {
+      "id": "7f902360-6d92-43e1-a866-79c23b513116",
+      "name": "Moi 5 phut - kiem tra dau vao",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -900,
+        -280
+      ],
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes",
+              "minutesInterval": 5
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "adc1c598-f86f-44d7-825e-2cf1fdb48ae5",
+      "name": "Chay thu thu cong",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -900,
+        -80
+      ],
+      "parameters": {}
+    },
+    {
+      "id": "21ab58a5-950c-4fb9-a64c-846f46d49bdd",
+      "name": "Lay job moi",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -650,
+        -220
+      ],
+      "parameters": {
+        "url": "http://renderer:8000/jobs/next",
+        "options": {
+          "timeout": 15000
+        }
+      }
+    },
+    {
+      "id": "c6d93cba-1f20-413e-8904-fa041c330587",
+      "name": "Bo qua neu khong co job",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -400,
+        -220
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "const job = $input.first()?.json ?? {};\nreturn job.has_job === true ? [{json: job}] : [];"
+      }
+    },
+    {
+      "id": "6f408f42-571a-4dc5-a5aa-3c2d75c6e20c",
+      "name": "Dung video va gui duyet Telegram",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -130,
+        -220
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "http://renderer:8000/jobs/render",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ job_id: $json.job_id }) }}",
+        "options": {
+          "timeout": 600000
+        }
+      }
+    },
+    {
+      "id": "b3a436a4-53fc-421f-a70c-c73ffac92b5a",
+      "name": "Moi 1 phut - tim video da duyet",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -900,
+        260
+      ],
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes",
+              "minutesInterval": 1
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "f36a7ba5-cfd5-43b5-b3a1-9e4ce034ce67",
+      "name": "Lay video da duyet",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -650,
+        260
+      ],
+      "parameters": {
+        "url": "http://renderer:8000/jobs/approved-next",
+        "options": {
+          "timeout": 15000
+        }
+      }
+    },
+    {
+      "id": "bd613447-f925-434e-877f-9ad68b1cc7a3",
+      "name": "Chi tiep tuc khi duoc duyet",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -400,
+        260
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "const job = $input.first()?.json ?? {};\nreturn job.has_job === true && !!job.video_file ? [{json: job}] : [];"
+      }
+    },
+    {
+      "id": "a28b6974-5842-4178-9c70-d884becb7f8c",
+      "name": "Doc MP4 da duyet",
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1.1,
+      "position": [
+        -150,
+        260
+      ],
+      "parameters": {
+        "fileSelector": "={{ $json.video_file }}",
+        "options": {
+          "dataPropertyName": "data"
+        }
+      }
+    },
+    {
+      "id": "07a4d222-8ec5-45c5-8f15-7c70615916dc",
+      "name": "Upload YouTube - PRIVATE khi thu",
+      "type": "n8n-nodes-base.youTube",
+      "typeVersion": 1,
+      "position": [
+        100,
+        260
+      ],
+      "parameters": {
+        "resource": "video",
+        "operation": "upload",
+        "title": "={{ $('Chi tiep tuc khi duoc duyet').first().json.title }}",
+        "regionCode": "US",
+        "categoryId": "27",
+        "binaryProperty": "data",
+        "options": {
+          "description": "={{ $('Chi tiep tuc khi duoc duyet').first().json.description }}",
+          "privacyStatus": "private"
+        }
+      }
+    },
+    {
+      "id": "b06d2749-8896-4531-9715-d6183af25e61",
+      "name": "Danh dau da upload",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        360,
+        260
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "http://renderer:8000/jobs/finalize",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ job_id: $('Chi tiep tuc khi duoc duyet').first().json.job_id, video_id: ($json.uploadId ?? $json.id) }) }}",
+        "options": {
+          "timeout": 15000
+        }
+      }
+    },
+    {
+      "id": "cec33c36-73ce-4bc8-8e34-acc2a7e2518e",
+      "name": "HUONG DAN - doc truoc khi kich hoat",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -940,
+        -640
+      ],
+      "parameters": {
+        "content": "# English Shorts / ChatGPT Plus input / free local rendering\n\n**Ngôn ngữ nội dung:** ENGLISH (en-US). Kokoro `af_heart`. `manifest.json` phải có `language: en-US`.\n\n**Nhánh A**: Mỗi 5 phút tìm thư mục `data/jobs/<job_id>/` có `manifest.json`, ảnh và file `READY`; render bằng Kokoro/FFmpeg rồi gửi video kèm nút duyệt trên Telegram.\n\n**Nhánh B**: Mỗi phút tìm video mà Telegram đã xác nhận **đúng Telegram user ID**. Chỉ video đó được upload lên YouTube.\n\n**BẢO VỆ**: YouTube để `private` lúc thử. Sau khi kiểm thử, đổi `privacyStatus` thành `public` để duyệt = công khai.\n\nKết nối credential YouTube OAuth2 tại node YouTube. Bot token/chỉ định người duyệt đặt ở file `.env` của renderer. Không cần OpenAI API, ElevenLabs, Creatomate, webhook công khai hay n8n Execute Command.\n\n**ZIP input:** Drop the complete ZIP into `data/inbox/`, then execute. The ZIP intake node validates and imports it automatically. Check `processed/` or `failed/` for results. No manual extraction or READY file is required. Images remain static with transitions; narration uses Kokoro.",
+        "width": 1670,
+        "height": 265,
+        "color": 4
+      }
+    },
+    {
+      "id": "23690a96-f376-45de-b635-2409abcc21f1",
+      "name": "Nhap ZIP tu inbox",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -860,
+        -220
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "http://renderer:8000/jobs/import-zips",
+        "options": {
+          "timeout": 120000
+        }
+      }
+    },
+    {
+      "id": "02377d17-6277-4138-98c5-4c0f26d3501c",
+      "name": "Chay MP4 Voiceover",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -900,
+        680
+      ],
+      "parameters": {}
+    },
+    {
+      "id": "80e96851-3f13-49c8-8990-89e7d4ca3098",
+      "name": "Moi 1 phut - cap nhat MP4",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -900,
+        870
+      ],
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes",
+              "minutesInterval": 1
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "8eeb6629-61fb-4d7c-be90-7923d5847ad8",
+      "name": "Nhan MP4 va tao giong nen",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -640,
+        680
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "http://renderer:8000/video-jobs/scan",
+        "options": {
+          "timeout": 15000
+        }
+      }
+    },
+    {
+      "id": "132967ae-02b2-4678-a6a6-87db4e5c802a",
+      "name": "Xem trang thai va duong dan ket qua",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -70,
+        680
+      ],
+      "parameters": {
+        "url": "http://renderer:8000/video-jobs",
+        "options": {
+          "timeout": 15000
+        }
+      }
+    },
+    {
+      "id": "cbca738c-96c2-419a-969c-28dc6f927aa1",
+      "name": "HUONG DAN MP4 Voiceover",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -900,
+        1070
+      ],
+      "parameters": {
+        "content": "# Branch C: MP4 + continuous ChatGPT script -> Kokoro -> Telegram -> YouTube\n\nGive ChatGPT Plus your video and PROMPT_CHATGPT_VIDEO.txt, with YOUR chosen topic. Save its script.json containing mode=continuous and one full narration. No contact sheet, frames, metadata file or timed speaking slots are required.\n\nPut input.mp4 and script.json together at data/video_jobs/<job_id>/, then run Chay MP4 Voiceover. Kokoro reads the full narration together; tempo is fitted globally to the real video duration. Original audio is replaced and animated word-highlight captions are burned into the MP4 using the same thin-outline style as the image branch. Scene order, playback speed and display dimensions are preserved. Processing runs in the background and finished output automatically goes to Telegram review.\n\nApprove on Telegram before upload. MP4 and image jobs share the same YouTube credentials, privacy setting and upload/finalize nodes. Publish for automatic schedules; otherwise run the MP4 branch again after approval. Large files use a smaller Telegram preview.",
+        "width": 1150,
+        "height": 350,
+        "color": 5
+      }
+    },
+    {
+      "id": "4bfb40d3-9bbd-4713-97bd-2b444548a1e3",
+      "name": "Gui MP4 sang duyet Telegram",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -350,
+        680
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "http://renderer:8000/video-jobs/queue-reviews",
+        "options": {
+          "timeout": 15000
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Moi 5 phut - kiem tra dau vao": {
+      "main": [
+        [
+          {
+            "node": "Nhap ZIP tu inbox",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Chay thu thu cong": {
+      "main": [
+        [
+          {
+            "node": "Nhap ZIP tu inbox",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Lay job moi": {
+      "main": [
+        [
+          {
+            "node": "Bo qua neu khong co job",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Bo qua neu khong co job": {
+      "main": [
+        [
+          {
+            "node": "Dung video va gui duyet Telegram",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Moi 1 phut - tim video da duyet": {
+      "main": [
+        [
+          {
+            "node": "Lay video da duyet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Lay video da duyet": {
+      "main": [
+        [
+          {
+            "node": "Chi tiep tuc khi duoc duyet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Chi tiep tuc khi duoc duyet": {
+      "main": [
+        [
+          {
+            "node": "Doc MP4 da duyet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Doc MP4 da duyet": {
+      "main": [
+        [
+          {
+            "node": "Upload YouTube - PRIVATE khi thu",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upload YouTube - PRIVATE khi thu": {
+      "main": [
+        [
+          {
+            "node": "Danh dau da upload",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Nhap ZIP tu inbox": {
+      "main": [
+        [
+          {
+            "node": "Lay job moi",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Chay MP4 Voiceover": {
+      "main": [
+        [
+          {
+            "node": "Nhan MP4 va tao giong nen",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Moi 1 phut - cap nhat MP4": {
+      "main": [
+        [
+          {
+            "node": "Nhan MP4 va tao giong nen",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Nhan MP4 va tao giong nen": {
+      "main": [
+        [
+          {
+            "node": "Gui MP4 sang duyet Telegram",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gui MP4 sang duyet Telegram": {
+      "main": [
+        [
+          {
+            "node": "Xem trang thai va duong dan ket qua",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Xem trang thai va duong dan ket qua": {
+      "main": [
+        [
+          {
+            "node": "Lay video da duyet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "Asia/Ho_Chi_Minh"
+  },
+  "active": false,
+  "pinData": {},
+  "meta": {
+    "templateCredsSetupCompleted": false
+  },
+  "tags": []
+}

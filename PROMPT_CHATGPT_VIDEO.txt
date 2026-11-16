@@ -1,0 +1,36 @@
+You are writing ONE smooth, continuous American-English voiceover for the video I attach directly to this conversation. The local workflow will replace the original audio with Kokoro voice af_heart and burn animated subtitles into the MP4, preserving the scene sequence, playback speed and display dimensions.
+
+Chủ đề do tôi chọn / My chosen topic: [ĐIỀN CHỦ ĐỀ CỦA BẠN Ở ĐÂY]
+
+TOPIC AND INPUT
+- The topic is chosen ONLY by me. Use the topic above or one I explicitly provide. If it is missing or the placeholder is unchanged, ask me for it and wait. Never choose or replace my topic yourself.
+- I may enter the topic in Vietnamese; preserve its meaning while writing the final narration in English.
+- Use the attached video and this prompt. Do not require contact sheets, extracted frames, video-info.json, or any metadata file from the local workflow.
+- Inspect the attached video and determine its duration if your tools actually support that. Never claim to have watched inaccessible media or heard audio you cannot access. If you cannot read the video or determine its duration, briefly say so and ask only for the duration and any essential context in the chat; do not invent these details.
+- Build the narrative around my chosen topic. Let the video guide the overall tone and pacing, without mechanically describing each frame or scene. Do not invent identities, locations, dialogue, facts, or connections. If the topic and visible material clearly conflict, ask how I want to proceed instead of silently changing the topic.
+
+WRITE ONE CONNECTED NARRATIVE
+- Write a cohesive spoken story: a concise hook, logically connected development, and a natural closing. Choose the internal structure and pacing to fit the topic and the FULL video duration.
+- The voiceover should run smoothly throughout the video. Do not split narration by frames, shots, timestamps, or fixed speaking slots. Do not write start/end segments or add silence between visual cuts.
+- Use natural transitions between ideas, varied everyday sentences, and ordinary punctuation. Avoid repeated mini-introductions, stop-start commentary, ellipses used as pauses, [pause] tags, and stage directions. Natural breathing and sentence pauses are welcome; artificial gaps are not.
+- Budget approximately 1.8-2.2 English words per second of video as an initial guide, then adjust the script length and sentence rhythm to suit the content. Aim for a natural spoken duration close to the full video, with only a brief natural ending. Actual Kokoro duration varies, so do not claim an exact TTS timing measurement unless you actually tested it.
+- The renderer synthesizes the ENTIRE narration together and adjusts tempo globally within a modest range to fit the actual video. It does not stretch each sentence into a frame slot. Do not deliberately underfill the video or expect the renderer to pad long silent sections.
+- The renderer creates and burns the animated subtitles automatically from narration. Do not add subtitle timing, ASS markup or caption instructions to the script; keep narration as one clean spoken text.
+- Do not generate images, edit the video, add music, request API keys, or call paid external APIs.
+
+DELIVER ONE SCRIPT FILE
+Create a real downloadable UTF-8 file named script.json, using this exact schema:
+{
+  "language": "en-US",
+  "mode": "continuous",
+  "title": "Accurate English title, 1-100 characters",
+  "description": "A brief accurate English YouTube description with relevant hashtags, including #Shorts",
+  "narration": "The complete connected English voiceover, from opening to closing, in one string."
+}
+
+Replace all example values with the finished content. Do not include a segments array, start/end timestamps, Markdown fences, comments, or instructions inside the JSON. Narration must be 3-20000 characters. Parse the JSON and check the script is coherent, on my topic, and reasonably sized for the video's duration before delivery.
+
+Return the actual download link to script.json, the video duration you could verify (or clearly state it was supplied by me), and the narration word count. Add this Vietnamese instruction:
+"Đặt input.mp4 và script.json cạnh nhau trong data/video_jobs/<job_id>/, sau đó chạy nhánh Chay MP4 Voiceover trong workflow chung."
+
+If file-download tools are unavailable, say so and provide the COMPLETE valid JSON so I can save it manually. Never invent a download link or claim to have inspected inaccessible video.

@@ -1,0 +1,128 @@
+{
+  "id": "b6c91a840f2d473e",
+  "name": "DA GOP - MP4 Voiceover (use the main workflow)",
+  "nodes": [
+    {
+      "id": "cf47fdaa-2280-4a6e-859a-a93af6661c19",
+      "name": "Chay MP4 Voiceover",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -640,
+        0
+      ],
+      "parameters": {}
+    },
+    {
+      "id": "102b44d7-82fb-443a-adee-33fbdfc29954",
+      "name": "Moi 1 phut - cap nhat MP4",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -640,
+        210
+      ],
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes",
+              "minutesInterval": 1
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "12645ab1-2f8f-483f-a3c5-a563001f7ed3",
+      "name": "Nhan MP4 va tao giong nen",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -350,
+        50
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "http://renderer:8000/video-jobs/scan",
+        "options": {
+          "timeout": 15000
+        }
+      }
+    },
+    {
+      "id": "a06277d3-e485-4f10-aa7f-fc92575c96d0",
+      "name": "Xem trang thai va duong dan ket qua",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -60,
+        50
+      ],
+      "parameters": {
+        "url": "http://renderer:8000/video-jobs",
+        "options": {
+          "timeout": 15000
+        }
+      }
+    },
+    {
+      "id": "07b12c53-4481-4c47-8d7a-64f41f1cda0a",
+      "name": "HUONG DAN MP4 Voiceover",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -710,
+        -440
+      ],
+      "parameters": {
+        "content": "# Branch C: MP4 + continuous ChatGPT script -> Kokoro -> Telegram -> YouTube\n\nGive ChatGPT Plus your video and PROMPT_CHATGPT_VIDEO.txt, with YOUR chosen topic. Save its script.json containing mode=continuous and one full narration. No contact sheet, frames, metadata file or timed speaking slots are required.\n\nPut input.mp4 and script.json together at data/video_jobs/<job_id>/, then run Chay MP4 Voiceover. Kokoro reads the full narration together; tempo is fitted globally to the real video duration. Original audio is replaced and animated word-highlight captions are burned into the MP4 using the same thin-outline style as the image branch. Scene order, playback speed and display dimensions are preserved. Processing runs in the background and finished output automatically goes to Telegram review.\n\nApprove on Telegram before upload. MP4 and image jobs share the same YouTube credentials, privacy setting and upload/finalize nodes. Publish for automatic schedules; otherwise run the MP4 branch again after approval. Large files use a smaller Telegram preview.",
+        "width": 1150,
+        "height": 400,
+        "color": 5
+      }
+    }
+  ],
+  "connections": {
+    "Chay MP4 Voiceover": {
+      "main": [
+        [
+          {
+            "node": "Nhan MP4 va tao giong nen",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Moi 1 phut - cap nhat MP4": {
+      "main": [
+        [
+          {
+            "node": "Nhan MP4 va tao giong nen",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Nhan MP4 va tao giong nen": {
+      "main": [
+        [
+          {
+            "node": "Xem trang thai va duong dan ket qua",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "Asia/Ho_Chi_Minh"
+  },
+  "pinData": {},
+  "tags": []
+}
